@@ -11,12 +11,12 @@ import logging
 
 
 # If a link does not have .jpg at the end, add it
-def if_no_extension_add(url):
-    if url[-4:] != '.jpg' and url[-4:] != '.png':
-        new_url = url + '.jpg'
-        return new_url
+def check_if_extension(url):
+    url_length = len(url)
+    if url[url_length - 4] != '.' and url[url_length - 5] != '.':
+        return False
     else:
-        return url
+        return True
 
 
 def handle_link(url):
@@ -24,21 +24,24 @@ def handle_link(url):
     # To-Do: Add more sites for better compatibility
     try:
         # Checks for the various states the imgur url can come in
-        if url.find('i.imgur') != -1:
-            fixed_url = if_no_extension_add(url)
-            image = fixed_url[20:]  # for imgur image, strip everything but id and .jpg
-            return [True, fixed_url, image]  # boolean for whether or not it failed
-
-        elif url.find('imgur') != -1:
-            jpg_url = if_no_extension_add(url)
-            fixed_url = jpg_url[:8] + 'i.' + jpg_url[8:]  # Add i to imgur link if it's not there.
-            image = fixed_url[20:]  # for imgur image, strip everything but id and .jpg
+        if url.find('imgur') != -1:
+            if not check_if_extension(url):
+                url = url + '.jpg'
+            if url[-4:] == 'gifv':
+                url = url[:-4] + 'mp4'
+            image = url[20:]
+            fixed_url = 'https://i.imgur.com/' + image
             return [True, fixed_url, image]  # boolean for whether or not it failed
 
         elif url.find('redd.it') != -1:
-            fixed_url = if_no_extension_add(url)
-            image = fixed_url[18:]  # for imgur image, strip everything but id and .jpg
+            image = url[18:]  # for imgur image, strip everything but id and .jpg
+            return [True, url, image]  # boolean for whether or not it failed
+
+        elif url.find('gfycat'):
+            image = url[19:] + '.webm'
+            fixed_url = 'https://giant.gfycat.com/' + image
             return [True, fixed_url, image]  # boolean for whether or not it failed
+
         else:
             # If not from a supported url, return False
             return [False, url, 'Not supported:']
