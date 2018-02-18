@@ -41,8 +41,8 @@ def handle_link(url):
 
         elif url.find('gfycat'):
             url = url + '.webm'
-            if not url[13:].find('giant'):
-                url = url[8:] + 'giant.' + url[:8]
+            if url[:13].find('giant') == -1:
+                url = url[:8] + 'giant.' + url[8:]
             image = url[25:]
             return [True, url, image]  # boolean for whether or not it failed
 
