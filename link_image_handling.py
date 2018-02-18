@@ -8,6 +8,7 @@
 import urllib.request
 import os
 import logging
+import shutil
 
 
 # If a link does not have .jpg at the end, add it
@@ -36,8 +37,11 @@ def handle_link(url):
             return [True, url, image]  # boolean for whether or not it failed
 
         elif url.find('redd.it') != -1:
-            image = url[18:]  # for imgur image, strip everything but id and .jpg
-            return [True, url, image]  # boolean for whether or not it failed
+            if url[8] == 'v':
+                return[False, url, 'Not supported']
+            else:
+                image = url[18:]  # for imgur image, strip everything but id and .jpg
+                return [True, url, image]  # boolean for whether or not it failed
 
         elif url.find('gfycat'):
             url = url + '.webm'
@@ -78,6 +82,15 @@ def get_image(url, image_location, image_directory):
 
     except:
         return [False, url, 'Failed to get image']
+
+
+# Sort all of the downloaded images into two categories
+def sort_downloads(image_directory):
+    for filename in os.listdir(image_directory):
+        if filename[-4:].find('jpg') == 1 or filename[-4:].find('png') == 1 or filename[-4:].find('gif') == 1:
+            shutil.move(image_directory + filename, image_directory + 'pictures/')
+        elif filename[-5:].find('webm') == 1 or filename[-4:].find('mp4') == 1:
+            shutil.move(image_directory + filename, image_directory + 'vids/')
 
 
 # download image for each submission

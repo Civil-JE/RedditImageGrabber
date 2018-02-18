@@ -52,3 +52,8 @@ elif sort_by == 'new':
             download_all(submission, IMAGE_DIRECTORY)
         except:
             logging.info('Failed to get image. | ' + submission.url + ' | ' + submission.title)
+
+try:
+    sort_downloads(IMAGE_DIRECTORY)
+except:
+    logging.ERROR('Failed to sort images')
