@@ -12,7 +12,7 @@ import logging
 logging.basicConfig(filename='redditImageGrab.log', format='%(levelname)s:%(asctime)s:%(message)s',
                     datefmt='%Y/%m/%d %I:%M:%S %p', level=logging.INFO)
 
-IMAGE_DIRECTORY = 'images\\'   # Change 'images\\' to your preferred image storage location
+IMAGE_DIRECTORY = 'images/'   # Change 'images/' to your preferred image storage location
 
 DEFAULT_VALUES = ['y', 'pics', 25, 'hot', None]  # Values used when default search chosen
 # [grab_type, subreddit, number_of_posts, sort_by, sort_time]

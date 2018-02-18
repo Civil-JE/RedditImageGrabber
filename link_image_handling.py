@@ -29,18 +29,22 @@ def handle_link(url):
                 url = url + '.jpg'
             if url[-4:] == 'gifv':
                 url = url[:-4] + 'mp4'
+            if url[9] != '.':
+                url = url[:8] + 'i.' + url[8:]
             image = url[20:]
-            fixed_url = 'https://i.imgur.com/' + image
-            return [True, fixed_url, image]  # boolean for whether or not it failed
+
+            return [True, url, image]  # boolean for whether or not it failed
 
         elif url.find('redd.it') != -1:
             image = url[18:]  # for imgur image, strip everything but id and .jpg
             return [True, url, image]  # boolean for whether or not it failed
 
         elif url.find('gfycat'):
-            image = url[19:] + '.webm'
-            fixed_url = 'https://giant.gfycat.com/' + image
-            return [True, fixed_url, image]  # boolean for whether or not it failed
+            url = url + '.webm'
+            if not url[13:].find('giant'):
+                url = url[8:] + 'giant.' + url[:8]
+            image = url[25:]
+            return [True, url, image]  # boolean for whether or not it failed
 
         else:
             # If not from a supported url, return False
@@ -51,6 +55,7 @@ def handle_link(url):
 
 
 # Moves the downloaded image to wherever you would like to store it.
+# No longer needed
 def move_image(image_name, image_directory):
     file_location = image_directory + image_name
 
@@ -67,15 +72,9 @@ def move_image(image_name, image_directory):
 # Finds the image from the url and downloads it.
 def get_image(url, image_location, image_directory):
     try:
-        urllib.request.urlretrieve(url, image_location)
+        urllib.request.urlretrieve(url, image_directory + image_location)
         logging.info(image_location + ' was downloaded.')
-        image_moved = move_image(image_location, image_directory)
-
-        if image_moved[0]:
-            logging.info('{0} was moved to {1}'.format(image_location, image_directory))
-            return [True, image_moved[1], 'Obtained and moved image to image folder']
-        else:
-            return [False, url, image_moved[2] + ' | ' + image_moved[1]]
+        return [True, image_directory + image_location, 'Obtained and moved image to image folder']
 
     except:
         return [False, url, 'Failed to get image']
